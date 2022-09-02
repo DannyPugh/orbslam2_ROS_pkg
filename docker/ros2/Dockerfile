@@ -1,4 +1,4 @@
-ARG ROS_DISTRO=foxy
+ARG ROS_DISTRO=galactic-ros-base-focal
 
 FROM ros:$ROS_DISTRO
 LABEL AUTHOR='Brandon Fan'
@@ -27,7 +27,9 @@ RUN apt-get update && \
     libglew-dev \
     ffmpeg \
     libboost-system-dev \
-    libcanberra-gtk-module libboost-all-dev
+    libcanberra-gtk-module libboost-all-dev \
+    byobu \
+    ros-$ROS_DISTRO-rviz2
 
 # pip dependencies
 RUN pip3 install --upgrade \
@@ -68,9 +70,12 @@ RUN git clone https://github.com/alsora/ros2-ORB_SLAM2 src/ros2-ORB_SLAM2 && \
 WORKDIR /root
 
 # Source ROS workspaces when opening new terminal
+COPY dds.xml /root/dds.xml
 RUN echo 'source /opt/ros/$ROS_DISTRO/setup.bash' >> .bashrc && \
 	echo 'source /usr/src/ros_ws/install/setup.bash' >> .bashrc && \
-	echo 'export ORB_SLAM2_ROOT_DIR=/usr/src/orbslam2/ORB_SLAM2' >> .bashrc && \
+	echo 'export CYCLONEDDS_URI=/root/dds.xml' >> .bashrc && \
+    echo 'export ROS_DOMAIN_ID=99' >> .bashrc && \
+    echo 'export ORB_SLAM2_ROOT_DIR=/usr/src/orbslam2/ORB_SLAM2' >> .bashrc && \
 	echo 'export LD_LIBRARY_PATH=~/usr/src/pangolin/Pangolin/build/src/:/usr/src/orbslam2/ORB_SLAM2/Thirdparty/DBoW2/lib:/usr/src/orbslam2/ORB_SLAM2/Thirdparty/g2o/lib:/usr/src/orbslam2/ORB_SLAM2/lib:$LD_LIBRARY_PATH' >> .bashrc
 
 RUN echo '#!/bin/bash -i' >> run.sh && \

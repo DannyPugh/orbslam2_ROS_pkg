@@ -11,4 +11,4 @@ docker run -it --rm \
   --volume="$HOME/.Xauthority:/root/.Xauthority:rw" \
   --privileged \
   --net=host \
-  shaderobotics/orbslam2-ros2 $@
+  shaderobotics/orbslam2-ros2 /bin/bash
